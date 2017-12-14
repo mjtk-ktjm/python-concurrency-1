@@ -7,3 +7,6 @@ Code along with \
 
 Git Repos:
  - https://github.com/tim-ojo/python-concurrency-getting-started
+
+Other Resources:
+ - https://www.tutorialspoint.com/python3/python_multithreading.htm
