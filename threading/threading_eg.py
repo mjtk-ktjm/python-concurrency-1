@@ -3,12 +3,12 @@ from time import sleep
 
 def run_as_thread(sleeper, thread_num):
   """Start a thread, sleep. Print thread identification to stdout."""
-  print("Doing some work in thread {}...".format(thread_num))
+  print("\t>>>Doing some work in thread {}...".format(thread_num))
   # https://stackoverflow.com/questions/4456581/python3-sleep-problem
   # print("Doing some work in thread...", flush=True)
   # sys.stdout.flush()
   sleep(sleeper)
-  print("Woke {}!".format(thread_num))
+  print("\t>>>Woke {}!".format(thread_num))
   return
 
 if __name__ == "__main__":
@@ -25,4 +25,7 @@ if __name__ == "__main__":
   u.start()
   t.join()
   u.join()
+
+  # This code blocks for threading completion
+
 
