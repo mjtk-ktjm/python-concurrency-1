@@ -23,9 +23,12 @@ if __name__ == "__main__":
   sleep_for = 3
   u = threading.Thread(target=run_as_thread, args=(sleep_for, i,))
   u.start()
-  t.join()
-  u.join()
 
-  # This code blocks for threading completion
+  # Joining the threads here results in code blocking.
+  # t.join()
+  # u.join()
+
+  print("This is the end.")
+
 
 
