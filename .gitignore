@@ -23,3 +23,7 @@ Session.vim
 tags
 
 *pyc
+
+.cache/
+incoming/
+outgoing/
