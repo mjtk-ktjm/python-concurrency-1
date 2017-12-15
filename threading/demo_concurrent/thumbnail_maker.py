@@ -8,7 +8,10 @@ import threading
 import PIL
 from PIL import Image
 
-logging.basicConfig(filename='logfile.log', level=logging.DEBUG)
+FORMAT = "[%(threadName)s, %(asctime)s, %(levelname)s] %(message)s"
+logging.basicConfig(filename='logfile.log', \
+  level=logging.DEBUG, \
+  format=FORMAT)
 
 class ThumbnailMakerService(object):
   """Download and resize a list of images."""
@@ -23,8 +26,9 @@ class ThumbnailMakerService(object):
 
     logging.info("Downloading {}...".format(url))
     img_filename = urlparse(url).path.split('/')[-1]
-    urlretrieve(url, self.input_dir + os.path.sep + img_filename)
-    logging.info("Done Downloading {}, took {}.".format(img_filename, end - start))
+    img_dest = self.input_dir + os.path.sep + img_filename
+    urlretrieve(url, img_dest)
+    logging.info("Done saving to {}.".format(img_dest))
 
   def download_images(self, img_url_list):
     if not img_url_list:
