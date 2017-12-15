@@ -27,3 +27,4 @@ tags
 .cache/
 incoming/
 outgoing/
+testing.log

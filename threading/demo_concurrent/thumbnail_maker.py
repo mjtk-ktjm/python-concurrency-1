@@ -9,7 +9,7 @@ import PIL
 from PIL import Image
 
 FORMAT = "[%(threadName)s, %(asctime)s, %(levelname)s] %(message)s"
-logging.basicConfig(filename='logfile.log', \
+logging.basicConfig(filename='testing.log', \
   level=logging.DEBUG, \
   format=FORMAT)
 
