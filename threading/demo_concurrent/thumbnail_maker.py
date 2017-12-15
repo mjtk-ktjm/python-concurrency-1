@@ -20,29 +20,32 @@ class ThumbnailMakerService(object):
     self.input_dir = self.home_dir + os.path.sep + 'incoming'
     self.output_dir = self.home_dir + os.path.sep + 'outgoing'
     self.total_size = 0
-    self.lock = threading.Lock()
+    self.dl_lock = threading.Lock()
+    max_dl_concurrency = 2
+    self.dl_semaphore = threading.Semaphore(max_dl_concurrency)
 
   def download_image(self, url):
     if not url:
       return
 
-    logging.info("Downloading {}...".format(url))
-    img_filename = urlparse(url).path.split('/')[-1]
-    img_dest = self.input_dir + os.path.sep + img_filename
-    urlretrieve(url, img_dest)
-    this_size = os.path.getsize(img_dest)
+    with self.dl_semaphore:
+      logging.info("Downloading {}...".format(url))
+      img_filename = urlparse(url).path.split('/')[-1]
+      img_dest = self.input_dir + os.path.sep + img_filename
+      urlretrieve(url, img_dest)
+      this_size = os.path.getsize(img_dest)
 
-    self.lock.acquire()
-    try:
-      self.total_size += this_size
-    finally:
-      self.lock.release()
+      self.dl_lock.acquire()
+      try:
+        self.total_size += this_size
+      finally:
+        self.dl_lock.release()
 
-    # Preferred method would always actually be with context handler
-    # with self.lock:
-    #   self.total_size += this_size
+      # Preferred method would always actually be with context handler
+      # with self.lock:
+      #   self.total_size += this_size
 
-    logging.info("Done saving to {}, took {} bytes.".format(img_dest, this_size))
+      logging.info("Done saving to {}, took {} bytes.".format(img_dest, this_size))
 
   def download_images(self, img_url_list):
     if not img_url_list:
