@@ -19,6 +19,8 @@ class ThumbnailMakerService(object):
     self.home_dir = home_dir
     self.input_dir = self.home_dir + os.path.sep + 'incoming'
     self.output_dir = self.home_dir + os.path.sep + 'outgoing'
+    self.total_size = 0
+    self.lock = threading.Lock()
 
   def download_image(self, url):
     if not url:
@@ -28,7 +30,19 @@ class ThumbnailMakerService(object):
     img_filename = urlparse(url).path.split('/')[-1]
     img_dest = self.input_dir + os.path.sep + img_filename
     urlretrieve(url, img_dest)
-    logging.info("Done saving to {}.".format(img_dest))
+    this_size = os.path.getsize(img_dest)
+
+    self.lock.acquire()
+    try:
+      self.total_size += this_size
+    finally:
+      self.lock.release()
+
+    # Preferred method would always actually be with context handler
+    # with self.lock:
+    #   self.total_size += this_size
+
+    logging.info("Done saving to {}, took {} bytes.".format(img_dest, this_size))
 
   def download_images(self, img_url_list):
     if not img_url_list:
@@ -51,7 +65,7 @@ class ThumbnailMakerService(object):
 
     end = time.perf_counter()
 
-    logging.info("downloaded {} images in {} seconds.".format(len(img_url_list), end - start))
+    logging.info("downloaded {} images ({} bytes) in {} seconds.".format(len(img_url_list), self.total_size, end - start))
 
   def perform_resizing(self):
     if not os.listdir(self.input_dir):
